@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/nicolasrsaraiva/todo-api/database"
 )
 
@@ -14,7 +12,7 @@ type Todo struct {
 
 func CreateToDo(Description string, Done bool) {
 	db := database.ConnectDB()
-	insertTodoDB, err := db.Prepare("insert into todo(Description, Done) values ($1, $2)")
+	insertTodoDB, err := db.Prepare("INSERT INTO todo(Description, Done) VALUES ($1, $2)")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -22,9 +20,9 @@ func CreateToDo(Description string, Done bool) {
 	defer db.Close()
 }
 
-func ShowToDos() []Todo {
+func GetToDos() []Todo {
 	db := database.ConnectDB()
-	selectTodoDB, err := db.Query("select * from todo")
+	selectTodoDB, err := db.Query("SELECT * FROM todo ORDER BY ID")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -52,28 +50,21 @@ func ShowToDos() []Todo {
 	return todosList
 }
 
-func ShowCompletedToDos(todosList []Todo) {
-	fmt.Println("All completed ToDos:")
-	for _, todo := range todosList {
-		if todo.Done {
-			fmt.Printf("Description: %s | Done: %t\n", todo.Description, todo.Done)
-		}
+func UpdateToDo(newDescription string, id int) {
+	db := database.ConnectDB()
+	updateTodo, err := db.Prepare("UPDATE todo SET Description = $1 WHERE ID = $2")
+	if err != nil {
+		panic(err.Error())
 	}
+	updateTodo.Exec(newDescription, id)
+	defer db.Close()
 }
 
-func ShowIncompletedToDos(todosList []Todo) {
-	fmt.Println("All incompleted ToDos:")
-	for _, todo := range todosList {
-		if !todo.Done {
-			fmt.Printf("Description: %s | Done: %t\n", todo.Description, todo.Done)
-		}
+func DeleteToDo(id int) {
+	db := database.ConnectDB()
+	deleteTodo, err := db.Prepare("DELETE FROM todo WHERE ID = $1")
+	if err != nil {
+		panic(err.Error())
 	}
-}
-
-func MakeToDoCompleted(todoCompleted *Todo, todosList *[]Todo) {
-	for _, todo := range *todosList {
-		if todo.Description == todoCompleted.Description {
-			todo.Done = true
-		}
-	}
+	deleteTodo.Exec(id)
 }
