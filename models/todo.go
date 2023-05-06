@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 
-	"github.com/nicolasrsaraiva/todo-api/db"
+	"github.com/nicolasrsaraiva/todo-api/database"
 )
 
 type Todo struct {
@@ -13,7 +13,7 @@ type Todo struct {
 }
 
 func CreateToDo(Description string, Done bool) {
-	db := db.ConnectDB()
+	db := database.ConnectDB()
 	insertTodoDB, err := db.Prepare("insert into todo(Description, Done) values ($1, $2)")
 	if err != nil {
 		panic(err.Error())
@@ -23,7 +23,7 @@ func CreateToDo(Description string, Done bool) {
 }
 
 func ShowToDos() []Todo {
-	db := db.ConnectDB()
+	db := database.ConnectDB()
 	selectTodoDB, err := db.Query("select * from todo")
 	if err != nil {
 		panic(err.Error())
