@@ -1,6 +1,10 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/nicolasrsaraiva/todo-api/db"
+)
 
 type Todo struct {
 	Id          int
@@ -8,9 +12,14 @@ type Todo struct {
 	Done        bool
 }
 
-func CreateTodo(desc string, done bool, todosList *[]Todo) {
-	todo := Todo{Description: desc, Done: done}
-	*todosList = append(*todosList, todo)
+func CreateTodo(Description string, Done bool) {
+	db := db.ConnectDB()
+	insertTodoDB, err := db.Prepare("insert into todo(Description, Done) values ($1, $2)")
+	if err != nil {
+		panic(err.Error())
+	}
+	insertTodoDB.Exec(Description, Done)
+	defer db.Close()
 }
 
 func ShowTodos(todosList []Todo) {
@@ -38,7 +47,7 @@ func ShowIncompletedTodos(todosList []Todo) {
 	}
 }
 
-func TodoCompleted(todoCompleted *Todo, todosList *[]Todo) {
+func MakeTodoCompleted(todoCompleted *Todo, todosList *[]Todo) {
 	for _, todo := range *todosList {
 		if todo.Description == todoCompleted.Description {
 			todo.Done = true

@@ -1,6 +1,10 @@
 package db
 
-import "database/sql"
+import (
+	"database/sql"
+
+	_ "github.com/lib/pq"
+)
 
 func ConnectDB() *sql.DB {
 	conn := "user=postgres dbname=todo_db password=root host=localhost sslmode=disable"
