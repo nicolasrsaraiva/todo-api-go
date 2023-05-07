@@ -13,18 +13,23 @@
             <thead>
                 <tr>
                     <th>To Do</th>
+                    <th>Description</th>
                     <th>Done</th>
                 </tr>
             </thead>
             <tbody>
                 {{range .}}
                 <tr>
+                    <td>{{.Name}}</td>
                     <td>{{.Description}}</td>
                     <td>{{.Done}}</td>
                 </tr>
                 {{end}}
             </tbody>
         </table>
+        <div class="card-footer">
+            <a href="/new-todo" class="btn btn-primary mb-2">Create new ToDo</a>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

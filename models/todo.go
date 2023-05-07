@@ -6,17 +6,18 @@ import (
 
 type Todo struct {
 	Id          int
+	Name        string
 	Description string
 	Done        bool
 }
 
-func CreateToDo(Description string, Done bool) {
+func CreateToDo(Name, Description string) {
 	db := database.ConnectDB()
-	insertTodoDB, err := db.Prepare("INSERT INTO todo(Description, Done) VALUES ($1, $2)")
+	insertTodoDB, err := db.Prepare("INSERT INTO todo(Name, Description, Done) VALUES ($1, $2, $3)")
 	if err != nil {
 		panic(err.Error())
 	}
-	insertTodoDB.Exec(Description, Done)
+	insertTodoDB.Exec(Name, Description, false)
 	defer db.Close()
 }
 
@@ -32,15 +33,16 @@ func GetToDos() []Todo {
 
 	for selectTodoDB.Next() {
 		var id int
-		var description string
+		var name, description string
 		var done bool
 
-		err := selectTodoDB.Scan(&id, &description, &done)
+		err := selectTodoDB.Scan(&id, &name, &description, &done)
 		if err != nil {
 			panic(err.Error())
 		}
 
 		todo.Id = id
+		todo.Name = name
 		todo.Description = description
 		todo.Done = done
 
